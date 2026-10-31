@@ -91,8 +91,6 @@
                         add.textContent = "저장";
                     });
 
-                    add.textContent = "[Add]";
-
                     const dltBtn = document.createElement("button");
                     dltBtn.textContent = "삭제";
 
@@ -132,11 +130,14 @@
                     console.error(error);
                 }
             }
-            loadBooks();
+            loadBooks(); //loading();
 
             async function addBooks(book) {
                 const response = await fetch(`https://6ae2ab38bbb54129229a3818.mockapi.io/books`, {
                     method: "POST",
+                    headers:{
+                            "Content-Type":"application/json"
+                        },
                     body: JSON.stringify(book)
                 });
                 if (!response.ok) {
@@ -160,7 +161,13 @@
             async function editBook(id, book) {
                 const response = await fetch(`https://6ae2ab38bbb54129229a3818.mockapi.io/books/${id}`,
                     {
-                        method: "PATCH",
+                        method: "PUT", //AI used point
+                        //PATCH 로 하니까 안됐음
+                        //추가적으로 PUT 으로 하니까 EDIT 시 오류는 없는데 반영이 안되는 문제 발생
+                        //headers 추가하니까 작동됨 (서버가 JSON 으로 인식하지 못하고 반영을 못하고 있었음))
+                        headers:{
+                            "Content-Type":"application/json"
+                        },
                         body: JSON.stringify(book)
                     });
 
@@ -222,18 +229,18 @@
                             year: Number(year.value)
                         });
                     } else {
-                        const target = books.find(function (b) {
-                            return b.id === editId;
-                        });
-                        target.title = title.value.trim();
-                        target.author = author.value.trim();
-                        target.category = category.value.trim();
-                        target.price = Number(price.value);
-                        target.year = Number(year.value);
+                        await editBook(editId, {
+                            title:title.value.trim(),
+                            author: author.value.trim(),
+                            category: category.value.trim(),
+                            price : Number(price.value),
+                            year : Number(year.value)
+                        })
                         editId = null;
+                        add.textContent = "[Add]";
                     }
                     title.value = author.value = category.value = price.value = year.value = "";
-                    loading();
+
                 } catch (error) {
                     console.error(error);
                 }
