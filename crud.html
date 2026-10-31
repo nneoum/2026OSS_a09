@@ -71,6 +71,11 @@
             const add = document.querySelector("#add");
             const list = document.querySelector("#list");
             let editId = null;
+            const message = document.querySelector("#message");
+
+            function showMessage(text) {
+                message.textContent = text;
+            }
 
             function loading() {
                 list.innerHTML = "";
@@ -106,6 +111,7 @@
                                 }
                             } catch (error) {
                                 console.error(error);
+                                showMessage("failed. (" + error.message + ")");
                             }
                         }
                     });
@@ -128,6 +134,8 @@
                     loading();
                 } catch (error) {
                     console.error(error);
+                    showMessage("failed. (" + error.message + ")");
+
                 }
             }
             loadBooks(); //loading();
@@ -135,9 +143,9 @@
             async function addBooks(book) {
                 const response = await fetch(`https://6ae2ab38bbb54129229a3818.mockapi.io/books`, {
                     method: "POST",
-                    headers:{
-                            "Content-Type":"application/json"
-                        },
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify(book)
                 });
                 if (!response.ok) {
@@ -145,7 +153,6 @@
                 }
                 await loadBooks();
             }
-
             async function dltBook(id) {
                 const response = await fetch(`https://6ae2ab38bbb54129229a3818.mockapi.io/books/${id}`,
                     {
@@ -165,8 +172,8 @@
                         //PATCH 로 하니까 안됐음
                         //추가적으로 PUT 으로 하니까 EDIT 시 오류는 없는데 반영이 안되는 문제 발생
                         //headers 추가하니까 작동됨 (서버가 JSON 으로 인식하지 못하고 반영을 못하고 있었음))
-                        headers:{
-                            "Content-Type":"application/json"
+                        headers: {
+                            "Content-Type": "application/json"
                         },
                         body: JSON.stringify(book)
                     });
@@ -230,11 +237,11 @@
                         });
                     } else {
                         await editBook(editId, {
-                            title:title.value.trim(),
+                            title: title.value.trim(),
                             author: author.value.trim(),
                             category: category.value.trim(),
-                            price : Number(price.value),
-                            year : Number(year.value)
+                            price: Number(price.value),
+                            year: Number(year.value)
                         })
                         editId = null;
                         add.textContent = "[Add]";
@@ -243,6 +250,8 @@
 
                 } catch (error) {
                     console.error(error);
+                    showMessage("failed. (" + error.message + ")");
+
                 }
             });
         });
@@ -271,6 +280,7 @@
     </div>
 
     <button id="add"> [Add] </button>
+    <p id="message"></p>
 
     <p> ID 제목 저자 분류 가격 연도 </p>
 
