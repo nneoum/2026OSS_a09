@@ -138,9 +138,9 @@
             async function addBooks(book) {
                 const response = await fetch("https://6ae2ab38bbb54129229a3818.mockapi.io/books", {
                     method: "POST",
-                    body:JSON.stringify(book)
+                    body: JSON.stringify(book)
                 });
-                if(!response.ok){
+                if (!response.ok) {
                     throw new Error('HTTP${response.status}')
                 }
                 await loadBooks();
@@ -185,24 +185,34 @@
                 return true;
             }
 
-            add.addEventListener("click", function () {
+            add.addEventListener("click", async function () {
                 if (!validation()) return;
 
-                if (editId == null) {
-                } else {
-                    const target = books.find(function (b) {
-                        return b.id === editId;
-                    }); //배열 순회하면서 조건에 일치하는 리턴값의 요소 전체를 target 변수에 저장함.
-                    target.title = title.value.trim();
-                    target.author = author.value.trim();
-                    target.category = category.value.trim();
-                    target.price = Number(price.value);
-                    target.year = Number(year.value);
-                    editId = null;
+                try {
+                    if (editId == null) {
+                        await addBooks({
+                            title:title.value.trim(),
+                            author:author.value.trim(),
+                            category:category.value.trim(),
+                            price:Number(price.value),
+                            year:Number(year.value)
+                        });
+                    } else {
+                        const target = books.find(function (b) {
+                            return b.id === editId;
+                        });
+                        target.title = title.value.trim();
+                        target.author = author.value.trim();
+                        target.category = category.value.trim();
+                        target.price = Number(price.value);
+                        target.year = Number(year.value);
+                        editId = null;
+                    }
+                    title.value = author.value = category.value = price.value = year.value = "";
+                    loading();
+                } catch(error){
+                    console.error(error);
                 }
-
-                title.value = author.value = category.value = price.value = year.value = "";
-                loading();
             });
         });
 
