@@ -72,6 +72,9 @@
             const list = document.querySelector("#list");
             let editId = null;
             const message = document.querySelector("#message");
+            const search = document.querySelector("#search");
+
+            search.addEventListener("input", loading);
 
             function showMessage(text) {
                 message.textContent = text;
@@ -79,7 +82,13 @@
 
             function loading() {
                 list.innerHTML = "";
-                books.forEach(function (book) {
+
+                const searchWord = search.value.trim().toLowerCase();
+                const filtering = books.filter(function(b){
+                    return String(b.title).toLowerCase().includes(searchWord);
+                });
+
+                filtering.forEach(function (book) {
                     const li = document.createElement("li");
                     li.textContent = book.id + " " + book.title + " " + book.author + " " + book.category + " " + book.price + " " + book.year;
 
@@ -281,6 +290,10 @@
 
     <button id="add"> [Add] </button>
     <p id="message"></p>
+
+    <div> search
+        <input type="text" id="search" placeholder="title">
+    </div>
 
     <p> ID 제목 저자 분류 가격 연도 </p>
 
