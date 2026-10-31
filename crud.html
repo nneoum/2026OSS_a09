@@ -146,6 +146,17 @@
                 await loadBooks();
             }
 
+            async function dltBook(id){
+                const response = await fetch("https://6ae2ab38bbb54129229a3818.mockapi.io/books/${id}",
+                { method:"DELETE" //AI used
+                });
+
+                if(!response.ok){
+                    throw new Error('HTTP${response.status}');
+                }
+                await loadBooks();
+            }
+
             function validation() {
                 if (title.value.trim() == "") {
                     alert("제목입력");
@@ -216,7 +227,7 @@
             });
         });
 
-        //--------------------
+
 
     </script>
 </head>
